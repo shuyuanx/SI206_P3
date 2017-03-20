@@ -129,6 +129,7 @@ prod_iter = map(lambda x: x.num_programs/x.years_UM, programmers)
 ## Write code to cast that iterator to a list. Save that list in the variable prod_list.
 prod_list = list(prod_iter)
 ## You may add a method to the Student class if you wish in order to do this, but you do not need to. (If you do, make sure you do not create any syntax errors that keep code/tests from running!)
+print(type(prod_iter))
 
 
 
@@ -146,7 +147,7 @@ print("\n\n***** Problem 8 *****")
 long_names = filter(lambda x: len(x.name)>5, programmers)
 ## Then write code to cast the value of long_names to a list and save it in the variable long_names_list. 
 long_names_list = list(long_names)
-
+print(type(long_names))
 
 ## [PROBLEM 9]
 print("\n\n***** Problem 9 *****")
@@ -160,6 +161,7 @@ names_with_not_too_much_seniority = [
     if len(student[0]) > student[1]
 ]
 
+print(type(names_with_not_too_much_seniority))
 
 ## [PROBLEM 10]
 print("\n\n***** Problem 10 *****")
@@ -186,7 +188,7 @@ def readfiles(filenames):
 
 # Define len_check
 def len_check(lines):
-    return (line for line in lines if len(line.split()) > 40)
+    return (line for line in lines if len(line) > 40)
 
 
 # Define main_filterer
@@ -195,10 +197,15 @@ def main_filterer(nameList):
     return len_check(gen)
 
 
+
 ## Uncomment this code to test so you can see easily what results from your code. DO uncomment it. DO NOT delete or change it. (You can add other code above while you work, of course.)
-# provided_file_names = ["samplehw6_1.txt","samplehw6_2.txt"]
-# for ln in main_filterer(provided_file_names):
-#     print(ln.rstrip('\n'), end=" ")
+provided_file_names = ["samplehw6_1.txt","samplehw6_2.txt"]
+for ln in main_filterer(provided_file_names):
+    print(ln.rstrip('\n'), end=" ")
+
+print()
+result = main_filterer(provided_file_names)
+print(type(result))
 #####
 
 
