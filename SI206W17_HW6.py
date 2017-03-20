@@ -203,6 +203,8 @@ provided_file_names = ["samplehw6_1.txt","samplehw6_2.txt"]
 for ln in main_filterer(provided_file_names):
     print(ln.rstrip('\n'), end=" ")
 
+
+print()
 print()
 result = main_filterer(provided_file_names)
 print(type(result))
