@@ -8,7 +8,7 @@ import tweepy
 import twitter_info # still need this in the same directory, filled out
 
 ## Make sure to comment with:
-# Your name:
+# Your name:Shuyuan Xiao
 # The names of any people you worked with for this assignment:
 
 # ******** #
@@ -55,6 +55,26 @@ except:
 # Your function must cache data it retrieves and rely on a cache file!
 # Note that this is a lot like work you have done already in class (but, depending upon what you did previously, may not be EXACTLY the same, so be careful your code does exactly what you want here).
 
+def get_user_tweets(user_handle):
+	unique_identifier = "twitter_{}".format(user_handle) 
+
+	if unique_identifier in CACHE_DICTION:
+		print('using cached data for', user_handle)
+		twitter_results = CACHE_DICTION[unique_identifier]
+
+	else:
+		print('getting data from internet for', user_handle)
+		twitter_results = api.user_timeline(user_handle)
+		# but also, save in the dictionary to cache it!
+		CACHE_DICTION[unique_identifier] = twitter_results # add it to the dictionary -- new key-val pair
+		# and then write the whole cache dictionary, now wi3th new info added, to the file, so it'll be there even after your program closes!
+		f = open(CACHE_FNAME,'w') # open the cache file for writing
+		f.write(json.dumps(CACHE_DICTION)) # make the whole dictionary holding data and unique identifiers into a json-formatted string, and write that wholllle string to a file so you'll have it next time!
+		f.close()
+
+	return twitter_results
+	
+
 
 
 
@@ -71,16 +91,24 @@ except:
 # Below we have provided interim outline suggestions for what to do, sequentially, in comments.
 
 # Make a connection to a new database tweets.db, and create a variable to hold the database cursor.
-
+conn = sqlite3.connect('tweets.db') 
+cur = conn.cursor()
 
 # Write code to drop the Tweets table if it exists, and create the table (so you can run the program over and over), with the correct (4) column names and appropriate types for each.
 # HINT: Remember that the time_posted column should be the TIMESTAMP data type!
+cur.execute('DROP TABLE IF EXISTS Tweets')
 
+table_spec = 'CREATE TABLE IF NOT EXISTS '
+table_spec += 'Tweets (tweet_id INTEGER PRIMARY KEY, ' 
+table_spec += 'author TEXT, ' 
+table_spec += 'time_posted TIMESTAMP, ' 
+table_spec += 'tweet_text TEXT, ' 
+table_spec += 'retweets INTEGER)' 
+cur.execute(table_spec)
 
 # Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those tweets in a variable called umsi_tweets.
-
-
-
+umsi_tweets = get_user_tweets("umsi")
+print(umsi_tweets)
 
 # Use a for loop, the cursor you defined above to execute INSERT statements, that insert the data from each of the tweets in umsi_tweets into the correct columns in each row of the Tweets database table.
 
