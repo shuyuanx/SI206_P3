@@ -75,10 +75,6 @@ def get_user_tweets(user_handle):
 	return twitter_results
 	
 
-
-
-
-
 # Write code to create/build a connection to a database: tweets.db,
 # And then load all of those tweets you got from Twitter into a database table called Tweets, with the following columns in each row:
 
@@ -99,7 +95,8 @@ cur = conn.cursor()
 cur.execute('DROP TABLE IF EXISTS Tweets')
 
 table_spec = 'CREATE TABLE IF NOT EXISTS '
-table_spec += 'Tweets (tweet_id INTEGER PRIMARY KEY, ' 
+table_spec += 'Tweets (id INTEGER PRIMARY KEY, ' 
+table_spec += 'tweet_id INTEGER, ' 
 table_spec += 'author TEXT, ' 
 table_spec += 'time_posted TIMESTAMP, ' 
 table_spec += 'tweet_text TEXT, ' 
@@ -108,17 +105,25 @@ cur.execute(table_spec)
 
 # Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those tweets in a variable called umsi_tweets.
 umsi_tweets = get_user_tweets("umsi")
-print(umsi_tweets)
 
 # Use a for loop, the cursor you defined above to execute INSERT statements, that insert the data from each of the tweets in umsi_tweets into the correct columns in each row of the Tweets database table.
 
 # (You should do nested data investigation on the umsi_tweets value to figure out how to pull out the data correctly!)
+statement = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?, ?)'
 
-
-
+for tweet in umsi_tweets:
+	tweet_info = []
+	tweet_info
+	tweet_info.append(None)
+	tweet_info.append(tweet["user"]["id"])
+	tweet_info.append(tweet["user"]["screen_name"])
+	tweet_info.append(tweet["created_at"])
+	tweet_info.append(tweet["text"])
+	tweet_info.append(tweet["retweet_count"])
+	cur.execute(statement, tweet_info)
 
 # Use the database connection to commit the changes to the database
-
+conn.commit()
 
 
 # You can check out whether it worked in the SQLite browser! (And with the tests.)
@@ -130,13 +135,14 @@ print(umsi_tweets)
 ## In this part of the homework, you will write a number of Python/SQL statements to get data from the database, as directed. For each direction, write Python code that includes an SQL statement that will get the data from your database. 
 ## You can verify whether your SQL statements work correctly in the SQLite browser! (And with the tests)
 
-
 # Select from the database all of the TIMES the tweets you collected were posted and fetch all the tuples that contain them in to the variable tweet_posted_times.
-
+query = "SELECT time_posted from Tweets"
+print(type(cur.execute(query)))
+tweet_posted_times = cur.fetchall()
+print(tweet_posted_times)
 
 # Select all of the tweets (the full rows/tuples of information) that have been retweeted MORE than 2 times, and fetch them into the variable more_than_2_rts.
-
-
+#query = "SELECT * from "
 
 # Select all of the TEXT values of the tweets that are retweets of another account (i.e. have "RT" at the beginning of the tweet text). Save the FIRST ONE from that group of text values in the variable first_rt. Note that first_rt should contain a single string value, not a tuple.
 
