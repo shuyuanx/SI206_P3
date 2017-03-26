@@ -59,11 +59,9 @@ def get_user_tweets(user_handle):
 	unique_identifier = "twitter_{}".format(user_handle) 
 
 	if unique_identifier in CACHE_DICTION:
-		print('using cached data for', user_handle)
 		twitter_results = CACHE_DICTION[unique_identifier]
 
 	else:
-		print('getting data from internet for', user_handle)
 		twitter_results = api.user_timeline(user_handle)
 		# but also, save in the dictionary to cache it!
 		CACHE_DICTION[unique_identifier] = twitter_results # add it to the dictionary -- new key-val pair
@@ -171,10 +169,12 @@ conn.close()
 # Also note that the SET type is what this function should return, NOT a list or tuple. We looked at very briefly at sets when we looked at set comprehensions last week. In a Python 3 set, which is a special data type, it's a lot like a combination of a list and a dictionary: no key-value pairs, BUT each element in a set is by definition unique. You can't have duplicates.
 
 # If you want to challenge yourself here -- this function definition (what goes under the def statement) CAN be written in one line! Definitely, definitely fine to write it with multiple lines, too, which will be much easier and clearer.
+def get_twitter_users(in_string):
+	return set(re.findall(r"@([a-zA-Z_0-9]+)", in_string, re.MULTILINE))
 
-
-
-
+demo_result = get_twitter_users("sdf @kjsdhf_f sdfhgh @3840d?!@ @123 @123")
+print(type(demo_result))
+print(demo_result)
 
 #########
 print("*** OUTPUT OF TESTS BELOW THIS LINE ***")
