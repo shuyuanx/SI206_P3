@@ -95,8 +95,7 @@ cur = conn.cursor()
 cur.execute('DROP TABLE IF EXISTS Tweets')
 
 table_spec = 'CREATE TABLE IF NOT EXISTS '
-table_spec += 'Tweets (id INTEGER PRIMARY KEY, ' 
-table_spec += 'tweet_id INTEGER, ' 
+table_spec += 'Tweets (tweet_id INTEGER, ' 
 table_spec += 'author TEXT, ' 
 table_spec += 'time_posted TIMESTAMP, ' 
 table_spec += 'tweet_text TEXT, ' 
@@ -109,12 +108,10 @@ umsi_tweets = get_user_tweets("umsi")
 # Use a for loop, the cursor you defined above to execute INSERT statements, that insert the data from each of the tweets in umsi_tweets into the correct columns in each row of the Tweets database table.
 
 # (You should do nested data investigation on the umsi_tweets value to figure out how to pull out the data correctly!)
-statement = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?, ?)'
+statement = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
 
 for tweet in umsi_tweets:
 	tweet_info = []
-	tweet_info
-	tweet_info.append(None)
 	tweet_info.append(tweet["user"]["id"])
 	tweet_info.append(tweet["user"]["screen_name"])
 	tweet_info.append(tweet["created_at"])
@@ -137,20 +134,29 @@ conn.commit()
 
 # Select from the database all of the TIMES the tweets you collected were posted and fetch all the tuples that contain them in to the variable tweet_posted_times.
 query = "SELECT time_posted from Tweets"
-print(type(cur.execute(query)))
+cur.execute(query)
 tweet_posted_times = cur.fetchall()
 print(tweet_posted_times)
 
 # Select all of the tweets (the full rows/tuples of information) that have been retweeted MORE than 2 times, and fetch them into the variable more_than_2_rts.
 #query = "SELECT * from "
+query = "SELECT * from Tweets WHERE retweets > 2"
+cur.execute(query)
+more_than_2_rts = cur.fetchall()
+print(more_than_2_rts)
 
 # Select all of the TEXT values of the tweets that are retweets of another account (i.e. have "RT" at the beginning of the tweet text). Save the FIRST ONE from that group of text values in the variable first_rt. Note that first_rt should contain a single string value, not a tuple.
+query = "SELECT tweet_text from Tweets WHERE instr(tweet_text, 'RT')"
+cur.execute(query)
 
-
+first_rt = cur.fetchone()
+first_rt = first_rt[0]
+print(type(first_rt))
+print(first_rt)
 
 # Finally, done with database stuff for a bit: write a line of code to close the cursor to the database.
 
-
+conn.close()
 
 ## [PART 3] - Processing data
 
