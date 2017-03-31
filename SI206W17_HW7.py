@@ -110,7 +110,7 @@ statement = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
 
 for tweet in umsi_tweets:
 	tweet_info = []
-	tweet_info.append(tweet["user"]["id"])
+	tweet_info.append(tweet["id"])
 	tweet_info.append(tweet["user"]["screen_name"])
 	tweet_info.append(tweet["created_at"])
 	tweet_info.append(tweet["text"])
