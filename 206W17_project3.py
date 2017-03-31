@@ -14,7 +14,7 @@ import twitter_info # same deal as always...
 import json
 import sqlite3
 
-## Your name:
+## Your name: Shuyuan Xiao
 ## The names of anyone you worked with on this project:
 
 #####
@@ -39,24 +39,39 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 
 CACHE_FNAME = "SI206_project3_cache.json"
 # Put the rest of your caching setup here:
-
-
+try:
+	f = open(CACHE_FNAME, 'r')
+	text = f.read()
+	f.close()
+	CACHE_DICTION = json.load(text)
+except:
+	CACHE_DICTION = {}
 
 # Define your function get_user_tweets here:
+def get_user_tweets(user):
+	unique_identifier = "twitter_{}".format(user)
 
-
-
+	if unique_identifier in CACHE_DICTION:
+		twitter_result = CACHE_DICTION[unique_identifier]
+	else:
+		twitter_result = api.user_timeline(user)
+		CACHE_DICTION[unique_identifier] = twitter_result
+		f = open(CACHE_FNAME, 'w')
+		f.write(json.dumps(CACHE_DICTION))
+		f.close()
+		
+	return twitter_result
 
 # Write an invocation to the function for the "umich" user timeline and save the result in a variable called umich_tweets:
-
-
-
+umich_tweets = get_user_tweets("umich")
 
 ## Task 2 - Creating database and loading data into database
 
 # You will be creating a database file: project3_tweets.db
 # Note that running the tests will actually create this file for you, but will not do anything else to it like create any tables; you should still start it in exactly the same way as if the tests did not do that! 
 # The database file should have 2 tables, and each should have the following columns... 
+conn = sqlite3.connect('project3_tweets.db')
+cur = conn.cursor()
 
 # table Tweets, with columns:
 # - tweet_id (containing the string id belonging to the Tweet itself, from the data you got from Twitter -- note the id_str attribute) -- this column should be the PRIMARY KEY of this table
@@ -64,20 +79,46 @@ CACHE_FNAME = "SI206_project3_cache.json"
 # - user_id (an ID string, referencing the Users table, see below)
 # - time_posted (the time at which the tweet was created)
 # - retweets (containing the integer representing the number of times the tweet has been retweeted)
+cur.execute('DROP TABLE IF EXISTS Tweets')
+table_spec = 'CREATE TABLE IF NOT EXISTS Tweets (tweet_id TEXT PRIMARY KEY, text TEXT, '
+table_spec += 'user_id TEXT, time_posted TIMESTAMP, retweets INTEGER)'
+cur.execute(table_spec)
 
 # table Users, with columns:
 # - user_id (containing the string id belonging to the user, from twitter data -- note the id_str attribute) -- this column should be the PRIMARY KEY of this table
 # - screen_name (containing the screen name of the user on Twitter)
 # - num_favs (containing the number of tweets that user has favorited)
 # - description (text containing the description of that user on Twitter, e.g. "Lecturer IV at UMSI focusing on programming" or "I tweet about a lot of things" or "Software engineer, librarian, lover of dogs..." -- whatever it is. OK if an empty string)
+cur.execute('DROP TABLE IF EXISTS Users')
+table_spec = 'CREATE TABLE IF NOT EXISTS Users (user_id TEXT PRIMARY KEY, screen_name TEXT, '
+table_spec += 'num_favs INTEGER, description TEXT)'
+cur.execute(table_spec)
 
 ## You should load into the Users table:
 # The umich user, and all of the data about users that are mentioned in the umich timeline. 
 # NOTE: For example, if the user with the "TedXUM" screen name is mentioned in the umich timeline, that Twitter user's info should be in the Users table, etc.
+user = api.get_user("umich")
+print(json.dumps(user, indent = 2))
+
+for tweet in umich_tweets:
+
+
+
 
 ## You should load into the Tweets table: 
 # Info about all the tweets (at least 20) that you gather from the umich timeline.
 # NOTE: Be careful that you have the correct user ID reference in the user_id column! See below hints.
+statement = 'INSERT INTO Tweets VALUES (?,?,?,?,?)'
+
+for tweet in umich_tweets:
+	tweet_info = []
+	tweet_info.append(tweet["id_str"])
+	tweet_info.append(tweet["text"])
+	tweet_info.append(tweet["user"]["id_str"]
+	tweet_info.append(tweet["created_at"])
+	tweet_info.append(tweet["retweet_count"])
+    cur.execute(statement, tweet_info) 
+
 
 ## HINT: There's a Tweepy method to get user info that we've looked at before, so when you have a user id or screenname you can find alllll the info you want about the user.
 ## HINT #2: You may want to go back to a structure we used in class this week to ensure that you reference the user correctly in each Tweet record.
