@@ -100,8 +100,23 @@ cur.execute(table_spec)
 user = api.get_user("umich")
 print(json.dumps(user, indent = 2))
 
-for tweet in umich_tweets:
+user_info = []
+#load in the umich user
+statement = 'INSERT INTO Users VALUES (?,?,?,?)'
 
+tweet = umich_tweets[0]
+user_info.append(tweet["user"]["id_str"])
+user_info.append(tweet["user"]["screen_name"])
+user_info.append(tweet["user"]["favourites_count"])
+user_info.append(tweet["user"]["description"])
+
+#insert in other users mentioned
+for tweet in umich_tweets:
+	user_mentioned = tweet["entities"]
+	for one_user in user_mentioned:
+		user_result = api.get_user()
+		user_info = []
+		user_info.append(tweet[])
 
 
 
@@ -114,10 +129,10 @@ for tweet in umich_tweets:
 	tweet_info = []
 	tweet_info.append(tweet["id_str"])
 	tweet_info.append(tweet["text"])
-	tweet_info.append(tweet["user"]["id_str"]
+	tweet_info.append(tweet["user"]["id_str"])
 	tweet_info.append(tweet["created_at"])
 	tweet_info.append(tweet["retweet_count"])
-    cur.execute(statement, tweet_info) 
+	cur.execute(statement, tweet_info) 
 
 
 ## HINT: There's a Tweepy method to get user info that we've looked at before, so when you have a user id or screenname you can find alllll the info you want about the user.
